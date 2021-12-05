@@ -5,12 +5,12 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StatCacheInfo implements Serializable {
+public class StatCacheInfo implements Serializable { // information about all cache
     private static final long serialVersionUID = 1L;
 
-    private long length, lastModified;
-    private long lineCount, chunkDuration;
-    private Set<Long> pageSet = new HashSet<>();
+    private long length, lastModified; // file information
+    private long lineCount, chunkDuration; // cache information
+    private Set<Long> pageSet = new HashSet<>(); // cached pages
 
     public StatCacheInfo(File file, long chunkDuration) {
         this.length = file.length();
@@ -39,7 +39,7 @@ public class StatCacheInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj) { // equival only if length, modify date and chunk duration is equivals
         if (obj instanceof StatCacheInfo) {
             StatCacheInfo cmpObj = (StatCacheInfo) obj;
             return this.length == cmpObj.length && this.lastModified == cmpObj.lastModified &&

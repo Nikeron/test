@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,6 +247,20 @@ public class StatChunker {
     }
 
     public Set<Long> getPages() {
-        return cacheInfo.getPages();
+        return cacheInfo.getPages(); // return set of unique pages
+    }
+
+    public void parallelPageWalker(long pageId, long from, long to, Consumer<StatCacheChunk.StatCacheRecord> consumer)
+            throws ClassNotFoundException, IOException { // through cache parallel walker
+        IntStream.rangeClosed((int) (from / cacheInfo.getChunkDuration()), (int) (to / cacheInfo.getChunkDuration()))
+                .parallel().forEach(timeChunk -> { // parallel time chunk stream
+                    try { // parallel consumer
+                        loadCacheChunk(pageId, timeChunk).getRecords().parallelStream().forEach(consumer);
+                    } catch (FileNotFoundException ex) {
+                        // logger.error(getChunkPath(pageId, i) + " not found!");
+                    } catch (ClassNotFoundException | IOException ex) {
+                        logger.error("can't load class", ex);
+                    }
+                });
     }
 }

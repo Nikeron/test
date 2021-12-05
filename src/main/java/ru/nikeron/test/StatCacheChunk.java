@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class StatCacheChunk implements Serializable {
+public class StatCacheChunk implements Serializable { // serializable container
     public static class StatCacheRecord implements Serializable {
         private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ public class StatCacheChunk implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    List<StatCacheRecord> records; // = new ArrayList<>();
+    private List<StatCacheRecord> records;
 
     public StatCacheChunk() {
         records = Collections.synchronizedList(new ArrayList<>());
@@ -27,5 +27,9 @@ public class StatCacheChunk implements Serializable {
 
     public void addRecord(StatCacheRecord record) {
         records.add(record);
+    }
+
+    public List<StatCacheRecord> getRecords() {
+        return records;
     }
 }
